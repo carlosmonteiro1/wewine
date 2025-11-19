@@ -1,4 +1,4 @@
 package com.wewine.wewine.DTO;
 
-public class UsuarioDTO {
+public class ClienteRequestDTO {
 }
