@@ -81,4 +81,9 @@ public class RepresentanteService {
         return representanteRepository.findById(id)
                 .map(this::toResponseDTO);
     }
+
+    public RepresentanteEntity findByEmailEntity(String email) {
+        return representanteRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Representante não encontrado (Erro interno de autenticação)"));
+    }
 }

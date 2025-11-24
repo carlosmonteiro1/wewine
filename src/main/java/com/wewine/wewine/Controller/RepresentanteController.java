@@ -94,9 +94,8 @@ public class RepresentanteController {
     // -----------------------------------------------------------
     @GetMapping("/{id}")
     public ResponseEntity<RepresentanteResponseDTO> findById(@PathVariable Long id) {
-
-        // O Service lança ResourceNotFoundException (404) se não encontrar.
-        RepresentanteResponseDTO dto = representanteService.findById(id);
-        return ResponseEntity.ok(dto);
+        return representanteService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

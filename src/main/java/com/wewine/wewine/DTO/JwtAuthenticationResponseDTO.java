@@ -14,5 +14,8 @@ public class JwtAuthenticationResponseDTO {
 
     private Long id;
     private String nome;
-    private TipoUsuario perfil;
+    private TipoUsuario tipo;
+
+    public JwtAuthenticationResponseDTO(String jwt, Long id, String nome, TipoUsuario tipo) {
+    }
 }
