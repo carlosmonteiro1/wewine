@@ -86,7 +86,7 @@ public class PedidoService {
             ItemPedidoEntity itemEntity = processItem(itemDto, vinho);
 
             itensEntity.add(itemEntity);
-            valorTotalItens = valorTotalItens.add(itemEntity.getSubTotalItem());
+            valorTotalItens = valorTotalItens.add(itemEntity.getSubtotalItem());
             valorTotalDesconto = valorTotalDesconto.add(itemEntity.getValorDescontoAplicado());
         }
 
