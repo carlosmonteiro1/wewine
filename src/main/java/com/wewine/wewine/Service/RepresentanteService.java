@@ -1,13 +1,10 @@
 package com.wewine.wewine.Service;
 
-import com.wewine.wewine.DTO.RepresentanteLoginDTO;
 import com.wewine.wewine.DTO.RepresentanteRequestDTO;
 import com.wewine.wewine.DTO.RepresentanteResponseDTO;
 import com.wewine.wewine.Entity.RepresentanteEntity;
-import com.wewine.wewine.Exception.ResourceNotFoundException;
 import com.wewine.wewine.Repository.RepresentanteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,12 +15,10 @@ import java.util.stream.Collectors;
 public class RepresentanteService {
 
     private final RepresentanteRepository representanteRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public RepresentanteService(RepresentanteRepository representanteRepository, PasswordEncoder passwordEncoder) {
+    public RepresentanteService(RepresentanteRepository representanteRepository) {
         this.representanteRepository = representanteRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     // Mapeamento DTO -> Entity
@@ -51,21 +46,10 @@ public class RepresentanteService {
 
     public RepresentanteResponseDTO createRepresentante(RepresentanteRequestDTO requestDTO) {
         RepresentanteEntity entity = toEntity(requestDTO);
-        String encodedPassword = passwordEncoder.encode(requestDTO.getSenha());
-        entity.setSenha(encodedPassword);
+        // Senha armazenada em texto plano (apenas para desenvolvimento/trabalho acadêmico)
+        entity.setSenha(requestDTO.getSenha());
         RepresentanteEntity savedEntity = representanteRepository.save(entity);
         return toResponseDTO(savedEntity);
-    }
-
-    public RepresentanteResponseDTO authenticate(RepresentanteLoginDTO loginDTO) {
-        RepresentanteEntity representante = representanteRepository.findByEmail(loginDTO.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("Credenciais inválidas."));
-        boolean isMatch = passwordEncoder.matches(loginDTO.getSenha(), representante.getSenha());
-        if (isMatch) {
-            return toResponseDTO(representante);
-        } else {
-            throw new ResourceNotFoundException("Credenciais inválidas.");
-        }
     }
 
     // Retorna todos os representantes
@@ -80,10 +64,5 @@ public class RepresentanteService {
     public Optional<RepresentanteResponseDTO> findById(Long id) {
         return representanteRepository.findById(id)
                 .map(this::toResponseDTO);
-    }
-
-    public RepresentanteEntity findByEmailEntity(String email) {
-        return representanteRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Representante não encontrado (Erro interno de autenticação)"));
     }
 }

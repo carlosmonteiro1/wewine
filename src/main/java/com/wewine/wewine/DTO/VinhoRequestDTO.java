@@ -1,33 +1,29 @@
 package com.wewine.wewine.DTO;
 
-import com.wewine.wewine.enums.NivelCorpoEnum;
-import com.wewine.wewine.enums.NivelDocuraEnum;
 import com.wewine.wewine.enums.TipoVinhoEnum;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.math.BigDecimal;
+
 @Data
 public class VinhoRequestDTO {
-    @NotNull
+    @NotBlank(message = "Nome é obrigatório")
     private String nome;
-    @NotNull
-    private String descricao;
-    @NotNull
-    private NivelCorpoEnum nivelCorpo;
-    @NotNull
-    private NivelDocuraEnum nivelDocura;
-    @NotNull
-    private String uva;
-    private String vinicola;
-    @NotNull
-    private int anoSafra;
-    private String pais;
+
+    @NotNull(message = "Ano da safra é obrigatório")
+    @Positive(message = "Ano da safra deve ser positivo")
+    private Integer anoSafra;
+
     private String regiao;
     private String urlImagem;
-    private int volume;
-    @NotNull
+
+    @NotNull(message = "Preço é obrigatório")
+    @Positive(message = "Preço deve ser positivo")
     private BigDecimal preco;
-    private Double teorAlcoolico;
+
     private TipoVinhoEnum tipo;
+    private String notasDegustacao;
 }

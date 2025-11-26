@@ -11,11 +11,8 @@ public class VinhoResponseDTO {
     private String nome;
     private String safra;
     private TipoVinhoEnum tipo;
-    private String uva;
-    private String pais;
     private String regiao;
     private String urlImagem;
     private BigDecimal preco;
-    private String descricaoCurta;
-    private String descricao;
+    private String notasDegustacao;
 }

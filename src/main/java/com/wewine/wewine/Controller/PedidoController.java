@@ -3,6 +3,7 @@ package com.wewine.wewine.Controller;
 import com.wewine.wewine.DTO.PedidoRequestDTO;
 import com.wewine.wewine.DTO.PedidoResponseDTO;
 import com.wewine.wewine.Service.PedidoService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pedidos")
+@Tag(name = "Pedidos", description = "Endpoints para gerenciamento de pedidos")
 public class PedidoController {
     private final PedidoService pedidoService;
 
@@ -49,7 +51,7 @@ public class PedidoController {
     // 2. ENDPOINT: LISTAGEM DE PEDIDOS POR REPRESENTANTE (GET)
     // Funcionalidade: Acompanhamento de pedidos (App Mobile)
     // -----------------------------------------------------------
-    @GetMapping("/meus")
+    @GetMapping("/meusPedidos")
     public ResponseEntity<List<PedidoResponseDTO>> findByRepresentante() {
         // Pega o ID do representante logado (simulação)
         Long representanteId = getRepresentanteIdSimulado();

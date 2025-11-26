@@ -1,0 +1,43 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------------< com.wewine:wewine >--------------------------
+[INFO] Building wewine 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact org.hibernate:hibernate-community-dialects:jar:6.6.33.Final has been relocated to org.hibernate.orm:hibernate-community-dialects:jar:6.6.33.Final
+[INFO] 
+[INFO] --- clean:3.4.1:clean (default-clean) @ wewine ---
+[INFO] Deleting /home/carlos/IdeaProjects/wewine/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ wewine ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ wewine ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 43 source files with javac [debug parameters release 21] to target/classes
+[INFO] /home/carlos/IdeaProjects/wewine/src/main/java/com/wewine/wewine/DTO/VinhoRequestDTO.java: Some input files use or override a deprecated API.
+[INFO] /home/carlos/IdeaProjects/wewine/src/main/java/com/wewine/wewine/DTO/VinhoRequestDTO.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ wewine ---
+[INFO] skip non existing resourceDirectory /home/carlos/IdeaProjects/wewine/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ wewine ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug parameters release 21] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.5.4:test (default-test) @ wewine ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.4.2:jar (default-jar) @ wewine ---
+[INFO] Building jar: /home/carlos/IdeaProjects/wewine/target/wewine-0.0.1-SNAPSHOT.jar
+[INFO] 
+[INFO] --- spring-boot:3.5.7:repackage (repackage) @ wewine ---
+[INFO] Replacing main artifact /home/carlos/IdeaProjects/wewine/target/wewine-0.0.1-SNAPSHOT.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to /home/carlos/IdeaProjects/wewine/target/wewine-0.0.1-SNAPSHOT.jar.original
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.820 s
+[INFO] Finished at: 2025-11-26T13:11:37-03:00
+[INFO] ------------------------------------------------------------------------

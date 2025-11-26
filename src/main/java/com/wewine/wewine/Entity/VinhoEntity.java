@@ -1,8 +1,5 @@
 package com.wewine.wewine.Entity;
 
-
-import com.wewine.wewine.enums.NivelCorpoEnum;
-import com.wewine.wewine.enums.NivelDocuraEnum;
 import com.wewine.wewine.enums.TipoVinhoEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,21 +14,11 @@ public class VinhoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
-    @Column(columnDefinition = "TEXT")
-    private String descricao;
-    private String uva;
-    private String vinicola;
-    private String pais;
     private String regiao;
     private String urlImagem;
-    private int volume;
     private int anoSafra;
     private BigDecimal preco;
-    private Double teorAlcoolico;
-    @Enumerated(EnumType.STRING)
-    private NivelCorpoEnum nivelCorpo;
-    @Enumerated(EnumType.STRING)
-    private NivelDocuraEnum nivelDocura;
     @Enumerated(EnumType.STRING)
     private TipoVinhoEnum tipo;
+    private String notasDegustacao;
 }

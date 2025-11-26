@@ -28,19 +28,12 @@ public class VinhoService {
         }
 
         entity.setNome(dto.getNome());
-        entity.setDescricao(dto.getDescricao());
-        entity.setNivelCorpo(dto.getNivelCorpo());
-        entity.setNivelDocura(dto.getNivelDocura());
-        entity.setUva(dto.getUva());
-        entity.setVinicola(dto.getVinicola());
         entity.setAnoSafra(dto.getAnoSafra());
-        entity.setPais(dto.getPais());
         entity.setRegiao(dto.getRegiao());
         entity.setUrlImagem(dto.getUrlImagem());
-        entity.setVolume(dto.getVolume());
         entity.setPreco(dto.getPreco());
-        entity.setTeorAlcoolico(dto.getTeorAlcoolico());
         entity.setTipo(dto.getTipo());
+        entity.setNotasDegustacao(dto.getNotasDegustacao());
 
         return entity;
     }
@@ -54,21 +47,11 @@ public class VinhoService {
         dto.setId(entity.getId());
         dto.setNome(entity.getNome());
         dto.setPreco(entity.getPreco());
-        dto.setDescricao(entity.getDescricao());
-        dto.setUva(entity.getUva());
-        dto.setPais(entity.getPais());
         dto.setRegiao(entity.getRegiao());
         dto.setUrlImagem(entity.getUrlImagem());
         dto.setSafra(entity.getAnoSafra() > 0 ? Integer.toString(entity.getAnoSafra()) : null);
-
-        if (entity.getDescricao() != null) {
-            String desc = entity.getDescricao().trim();
-            dto.setDescricaoCurta(desc.length() <= 120 ? desc : desc.substring(0, 120).trim() + "...");
-        } else {
-            dto.setDescricaoCurta(null);
-        }
-
         dto.setTipo(entity.getTipo());
+        dto.setNotasDegustacao(entity.getNotasDegustacao());
 
         return dto;
     }
@@ -89,5 +72,29 @@ public class VinhoService {
     public Optional<VinhoResponseDTO> findById(Long id) {
         return vinhoRepository.findById(id)
                 .map(this::toResponseDTO);
+    }
+
+    public Optional<VinhoResponseDTO> updateVinho(Long id, VinhoRequestDTO requestDTO) {
+        return vinhoRepository.findById(id)
+                .map(existingVinho -> {
+                    existingVinho.setNome(requestDTO.getNome());
+                    existingVinho.setAnoSafra(requestDTO.getAnoSafra());
+                    existingVinho.setRegiao(requestDTO.getRegiao());
+                    existingVinho.setUrlImagem(requestDTO.getUrlImagem());
+                    existingVinho.setPreco(requestDTO.getPreco());
+                    existingVinho.setTipo(requestDTO.getTipo());
+                    existingVinho.setNotasDegustacao(requestDTO.getNotasDegustacao());
+
+                    VinhoEntity updatedVinho = vinhoRepository.save(existingVinho);
+                    return toResponseDTO(updatedVinho);
+                });
+    }
+
+    public boolean deleteVinho(Long id) {
+        if (vinhoRepository.existsById(id)) {
+            vinhoRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

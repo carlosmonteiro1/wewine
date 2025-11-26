@@ -82,4 +82,42 @@ public class ClienteService {
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente com ID " + id + " não encontrado."));
         return toResponseDTO(entity);
     }
+
+    public List<ClienteResponseDTO> findAll() {
+        List<ClienteEntity> entities = clienteRepository.findAll();
+        return entities.stream().map(this::toResponseDTO).collect(Collectors.toList());
+    }
+
+    public ClienteResponseDTO updateCliente(Long id, ClienteRequestDTO requestDTO, Long idRepresentante) {
+        ClienteEntity entity = clienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente com ID " + id + " não encontrado."));
+
+        RepresentanteEntity representante = representanteRepository.findById(idRepresentante)
+                .orElseThrow(() -> new ResourceNotFoundException("Representante com ID " + idRepresentante + " não encontrado."));
+
+        entity.setNomeRazaoSocial(requestDTO.getNomeRazaoSocial());
+        entity.setCpfCnpj(requestDTO.getCpfCnpj());
+        entity.setNomeResponsavel(requestDTO.getNomeResponsavel());
+        entity.setTelefone(requestDTO.getTelefone());
+        entity.setLogradouro(requestDTO.getLogradouro());
+        entity.setNumero(requestDTO.getNumero());
+        entity.setBairro(requestDTO.getBairro());
+        entity.setCidade(requestDTO.getCidade());
+        entity.setEstado(requestDTO.getEstado());
+        entity.setCep(requestDTO.getCep());
+        entity.setLatitude(requestDTO.getLatitude());
+        entity.setLongitude(requestDTO.getLongitude());
+        entity.setRepresentante(representante);
+
+        ClienteEntity updated = clienteRepository.save(entity);
+        return toResponseDTO(updated);
+    }
+
+    public boolean deleteCliente(Long id) {
+        if (clienteRepository.existsById(id)) {
+            clienteRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }
