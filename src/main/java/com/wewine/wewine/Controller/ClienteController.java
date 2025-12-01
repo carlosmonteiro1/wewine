@@ -76,7 +76,7 @@ public class ClienteController {
         }
     }
 
-    @PutMapping("/{id}/representante/{idRepresentante}")
+    @PutMapping("/{id}")
     @Operation(summary = "Atualizar cliente", description = "Atualiza os dados de um cliente existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente atualizado com sucesso"),
@@ -85,10 +85,9 @@ public class ClienteController {
     })
     public ResponseEntity<ClienteResponseDTO> update(
             @PathVariable Long id,
-            @PathVariable Long idRepresentante,
             @Valid @RequestBody ClienteRequestDTO request) {
         try {
-            ClienteResponseDTO updated = clienteService.updateCliente(id, request, idRepresentante);
+            ClienteResponseDTO updated = clienteService.updateCliente(id, request, request.getRepresentanteId());
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

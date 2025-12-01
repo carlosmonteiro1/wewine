@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,16 +66,15 @@ public class PedidoService {
     public PedidoResponseDTO createPedido(PedidoRequestDTO requestDTO) {
 
         // 1. Validação dos Vínculos Essenciais
-        ClienteEntity cliente = clienteRepository.findById(requestDTO.getIdCliente())
+        ClienteEntity cliente = clienteRepository.findById(requestDTO.getClienteId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado."));
 
-        RepresentanteEntity representante = representanteRepository.findById(requestDTO.getIdRepresentante())
+        RepresentanteEntity representante = representanteRepository.findById(requestDTO.getRepresentanteId())
                 .orElseThrow(() -> new ResourceNotFoundException("Representante não encontrado."));
 
         // 2. Mapeamento e Processamento dos Itens
         List<ItemPedidoEntity> itensEntity = new ArrayList<>();
-        BigDecimal valorTotalItens = BigDecimal.ZERO;
-        BigDecimal valorTotalDesconto = BigDecimal.ZERO;
+        BigDecimal total = BigDecimal.ZERO;
 
         for (ItemPedidoRequestDTO itemDto : requestDTO.getItens()) {
             VinhoEntity vinho = vinhoRepository.findById(itemDto.getIdVinho())
@@ -86,8 +84,7 @@ public class PedidoService {
             ItemPedidoEntity itemEntity = processItem(itemDto, vinho);
 
             itensEntity.add(itemEntity);
-            valorTotalItens = valorTotalItens.add(itemEntity.getSubtotalItem());
-            valorTotalDesconto = valorTotalDesconto.add(itemEntity.getValorDescontoAplicado());
+            total = total.add(itemEntity.getSubtotalItem());
         }
 
         // 3. Criação do Pedido Principal (Cabeçalho)
@@ -96,18 +93,13 @@ public class PedidoService {
         // Configurações do pedido
         pedido.setCliente(cliente);
         pedido.setRepresentante(representante);
-        pedido.setDataCriacao(LocalDateTime.now());
-        pedido.setFormaPagamento(requestDTO.getFormaPagamento());
+        pedido.setData(requestDTO.getData());
+        pedido.setPagamento(requestDTO.getPagamento());
         pedido.setStatus(StatusPedido.EMITIDO); // Status inicial
-
-        // Configura os valores calculados
-        pedido.setValorTotalItens(valorTotalItens); // Total antes de descontos
-        pedido.setValorDesconto(valorTotalDesconto); // Total de descontos
-        pedido.setValorTotalFinal(valorTotalItens.subtract(valorTotalDesconto)); // Total Final
+        pedido.setTotal(total);
 
         // Vínculo dos itens com o pedido principal
         pedido.setItens(itensEntity);
-        // ATENÇÃO: É necessário configurar Cascade.ALL no PedidoEntity para salvar os itens automaticamente.
         itensEntity.forEach(item -> item.setPedido(pedido));
 
         // 4. Persistência
@@ -152,19 +144,21 @@ public class PedidoService {
     private PedidoResponseDTO toResponseDTO(PedidoEntity entity) {
         PedidoResponseDTO dto = new PedidoResponseDTO();
 
-        dto.setId(entity.getId());
-        dto.setDataCriacao(entity.getDataCriacao());
-        dto.setFormaPagamento(entity.getFormaPagamento().name());
+        dto.setCodigoPedido(entity.getCodigoPedido());
+        dto.setData(entity.getData());
+        dto.setPagamento(entity.getPagamento());
         dto.setStatus(entity.getStatus());
+        dto.setTotal(entity.getTotal());
 
-        // Mapeamento de valores
-        dto.setValorTotalItens(entity.getValorTotalItens());
-        dto.setValorDesconto(entity.getValorDesconto());
-        dto.setValorTotalFinal(entity.getValorTotalFinal());
+        // Mapeamento do Cliente
+        if (entity.getCliente() != null) {
+            dto.setCliente(toClienteResponseDTO(entity.getCliente()));
+        }
 
-        // Dados de referência (para relatórios)
-        dto.setNomeCliente(entity.getCliente().getNomeRazaoSocial());
-        dto.setNomeRepresentante(entity.getRepresentante().getNome());
+        // Mapeamento do Representante
+        if (entity.getRepresentante() != null) {
+            dto.setRepresentante(toRepresentanteResponseDTO(entity.getRepresentante()));
+        }
 
         // Mapeamento dos Itens
         List<ItemPedidoResponseDTO> itensDTO = entity.getItens().stream()
@@ -172,6 +166,60 @@ public class PedidoService {
                 .collect(Collectors.toList());
         dto.setItens(itensDTO);
 
+        return dto;
+    }
+
+    // Mapeamento de ClienteEntity -> ClienteResponseDTO
+    private com.wewine.wewine.DTO.ClienteResponseDTO toClienteResponseDTO(ClienteEntity entity) {
+        com.wewine.wewine.DTO.ClienteResponseDTO dto = new com.wewine.wewine.DTO.ClienteResponseDTO();
+        dto.setId(entity.getId());
+        dto.setNome(entity.getNome());
+        dto.setCpfCnpj(entity.getCpfCnpj());
+        dto.setEndereco(entity.getEndereco());
+        dto.setCidade(entity.getCidade());
+        dto.setCep(entity.getCep());
+        dto.setEmail(entity.getEmail());
+        dto.setTelefone(entity.getTelefone());
+        dto.setFormasPagamento(entity.getFormasPagamento());
+        dto.setLatitude(entity.getLatitude());
+        dto.setLongitude(entity.getLongitude());
+
+        if (entity.getRepresentante() != null) {
+            dto.setRepresentante(toRepresentanteResponseDTO(entity.getRepresentante()));
+        }
+
+        return dto;
+    }
+
+    // Mapeamento de RepresentanteEntity -> RepresentanteResponseDTO
+    private com.wewine.wewine.DTO.RepresentanteResponseDTO toRepresentanteResponseDTO(RepresentanteEntity entity) {
+        com.wewine.wewine.DTO.RepresentanteResponseDTO dto = new com.wewine.wewine.DTO.RepresentanteResponseDTO();
+        dto.setId(entity.getId());
+        dto.setNome(entity.getNome());
+        dto.setCpfCnpj(entity.getCpfCnpj());
+        dto.setRgIe(entity.getRgIe());
+        dto.setNascimento(entity.getNascimento());
+        dto.setNomeFantasia(entity.getNomeFantasia());
+        dto.setSituacaoLegal(entity.getSituacaoLegal());
+        dto.setStatus(entity.getStatus());
+        dto.setEmail(entity.getEmail());
+        dto.setCelularWhatsapp(entity.getCelularWhatsapp());
+        dto.setCep(entity.getCep());
+        dto.setEndereco(entity.getEndereco());
+        dto.setNumero(entity.getNumero());
+        dto.setComplemento(entity.getComplemento());
+        dto.setBairro(entity.getBairro());
+        dto.setCidade(entity.getCidade());
+        dto.setEstado(entity.getEstado());
+        dto.setRegiaoAtuacao(entity.getRegiaoAtuacao());
+        dto.setRegraComissao(entity.getRegraComissao());
+        dto.setObservacoes(entity.getObservacoes());
+        dto.setBanco(entity.getBanco());
+        dto.setAgencia(entity.getAgencia());
+        dto.setConta(entity.getConta());
+        dto.setTipoConta(entity.getTipoConta());
+        dto.setConcederAcessoApp(entity.getConcederAcessoApp());
+        dto.setLoginAplicativo(entity.getLoginAplicativo());
         return dto;
     }
 

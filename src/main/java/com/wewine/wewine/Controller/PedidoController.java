@@ -40,7 +40,7 @@ public class PedidoController {
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(saved.getId())
+                .buildAndExpand(saved.getCodigoPedido())
                 .toUri();
 
         // Retorna 201 Created

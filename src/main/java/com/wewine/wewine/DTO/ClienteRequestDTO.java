@@ -1,24 +1,39 @@
 package com.wewine.wewine.DTO;
 
+import com.wewine.wewine.enums.CidadeEnum;
+import com.wewine.wewine.enums.FormaPagamentoEnum;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.antlr.v4.runtime.misc.NotNull;
+
+import java.util.List;
 
 @Data
 public class ClienteRequestDTO {
-    @NotNull
-    private String nomeRazaoSocial;
-    @NotNull
+
+    @NotBlank
+    private String nome;
+
+    @NotBlank
     private String cpfCnpj;
-    private String nomeResponsavel;
-    private String telefone;
-    private String logradouro;
-    private String numero;
-    private String bairro;
-    private String cidade;
-    private String estado;
+
+    private String endereco;
+
+    @NotNull
+    private CidadeEnum cidade;
+
     private String cep;
+
     @NotNull
+    private Long representanteId;
+
+    private String email;
+
+    private String telefone;
+
+    private List<FormaPagamentoEnum> formasPagamento;
+
     private Double latitude;
-    @NotNull
+
     private Double longitude;
 }

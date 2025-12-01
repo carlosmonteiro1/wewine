@@ -3,6 +3,7 @@ package com.wewine.wewine.Service;
 
 import com.wewine.wewine.DTO.ClienteRequestDTO;
 import com.wewine.wewine.DTO.ClienteResponseDTO;
+import com.wewine.wewine.DTO.RepresentanteResponseDTO;
 import com.wewine.wewine.Entity.ClienteEntity;
 import com.wewine.wewine.Entity.RepresentanteEntity;
 import com.wewine.wewine.Exception.ResourceNotFoundException;
@@ -29,19 +30,17 @@ public class ClienteService {
     /* Mapeamento DTO -> Entity */
     private ClienteEntity toEntity(ClienteRequestDTO dto, RepresentanteEntity representante) {
         ClienteEntity entity = new ClienteEntity();
-        entity.setNomeRazaoSocial(dto.getNomeRazaoSocial());
+        entity.setNome(dto.getNome());
         entity.setCpfCnpj(dto.getCpfCnpj());
-        entity.setNomeResponsavel(dto.getNomeResponsavel());
-        entity.setTelefone(dto.getTelefone());
-        entity.setLogradouro(dto.getLogradouro());
-        entity.setNumero(dto.getNumero());
-        entity.setBairro(dto.getBairro());
+        entity.setEndereco(dto.getEndereco());
         entity.setCidade(dto.getCidade());
-        entity.setEstado(dto.getEstado());
         entity.setCep(dto.getCep());
+        entity.setRepresentante(representante);
+        entity.setEmail(dto.getEmail());
+        entity.setTelefone(dto.getTelefone());
+        entity.setFormasPagamento(dto.getFormasPagamento());
         entity.setLatitude(dto.getLatitude());
         entity.setLongitude(dto.getLongitude());
-        entity.setRepresentante(representante);
         return entity;
     }
 
@@ -49,17 +48,25 @@ public class ClienteService {
     private ClienteResponseDTO toResponseDTO(ClienteEntity entity) {
         ClienteResponseDTO dto = new ClienteResponseDTO();
         dto.setId(entity.getId());
-        dto.setNomeRazaoSocial(entity.getNomeRazaoSocial());
+        dto.setNome(entity.getNome());
         dto.setCpfCnpj(entity.getCpfCnpj());
+        dto.setEndereco(entity.getEndereco());
+        dto.setCidade(entity.getCidade());
+        dto.setCep(entity.getCep());
+        dto.setEmail(entity.getEmail());
+        dto.setTelefone(entity.getTelefone());
+        dto.setFormasPagamento(entity.getFormasPagamento());
         dto.setLatitude(entity.getLatitude());
         dto.setLongitude(entity.getLongitude());
 
-        String enderecoCompleto = entity.getLogradouro() + ", " + entity.getNumero() + " - " +
-                entity.getBairro() + ", " + entity.getCidade() + "/" + entity.getEstado();
-        dto.setEnderecoCompleto(enderecoCompleto);
-
         if (entity.getRepresentante() != null) {
-            dto.setNomeRepresentante(entity.getRepresentante().getNome());
+            RepresentanteResponseDTO representanteDTO = new RepresentanteResponseDTO();
+            representanteDTO.setId(entity.getRepresentante().getId());
+            representanteDTO.setNome(entity.getRepresentante().getNome());
+            representanteDTO.setCpfCnpj(entity.getRepresentante().getCpfCnpj());
+            representanteDTO.setEmail(entity.getRepresentante().getEmail());
+            representanteDTO.setCelularWhatsapp(entity.getRepresentante().getCelularWhatsapp());
+            dto.setRepresentante(representanteDTO);
         }
         return dto;
     }
@@ -95,16 +102,14 @@ public class ClienteService {
         RepresentanteEntity representante = representanteRepository.findById(idRepresentante)
                 .orElseThrow(() -> new ResourceNotFoundException("Representante com ID " + idRepresentante + " não encontrado."));
 
-        entity.setNomeRazaoSocial(requestDTO.getNomeRazaoSocial());
+        entity.setNome(requestDTO.getNome());
         entity.setCpfCnpj(requestDTO.getCpfCnpj());
-        entity.setNomeResponsavel(requestDTO.getNomeResponsavel());
-        entity.setTelefone(requestDTO.getTelefone());
-        entity.setLogradouro(requestDTO.getLogradouro());
-        entity.setNumero(requestDTO.getNumero());
-        entity.setBairro(requestDTO.getBairro());
+        entity.setEndereco(requestDTO.getEndereco());
         entity.setCidade(requestDTO.getCidade());
-        entity.setEstado(requestDTO.getEstado());
         entity.setCep(requestDTO.getCep());
+        entity.setEmail(requestDTO.getEmail());
+        entity.setTelefone(requestDTO.getTelefone());
+        entity.setFormasPagamento(requestDTO.getFormasPagamento());
         entity.setLatitude(requestDTO.getLatitude());
         entity.setLongitude(requestDTO.getLongitude());
         entity.setRepresentante(representante);

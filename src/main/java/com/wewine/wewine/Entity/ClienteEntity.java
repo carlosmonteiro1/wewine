@@ -1,7 +1,11 @@
 package com.wewine.wewine.Entity;
 
+import com.wewine.wewine.enums.CidadeEnum;
+import com.wewine.wewine.enums.FormaPagamentoEnum;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -10,20 +14,34 @@ public class ClienteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nomeRazaoSocial;
-    private String nomeResponsavel;
+
+    private String nome;
+
     @Column(unique = true, nullable = false)
     private String cpfCnpj;
-    private String logradouro;
-    private String numero;
-    private String bairro;
-    private String cidade;
-    private String estado;
+
+    private String endereco;
+
+    @Enumerated(EnumType.STRING)
+    private CidadeEnum cidade;
+
     private String cep;
-    private String telefone;
-    private Double latitude;
-    private Double longitude;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "representante_id")
     private RepresentanteEntity representante;
+
+    private String email;
+
+    private String telefone;
+
+    @ElementCollection(targetClass = FormaPagamentoEnum.class)
+    @CollectionTable(name = "cliente_formas_pagamento", joinColumns = @JoinColumn(name = "cliente_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "forma_pagamento")
+    private List<FormaPagamentoEnum> formasPagamento;
+
+    private Double latitude;
+
+    private Double longitude;
 }

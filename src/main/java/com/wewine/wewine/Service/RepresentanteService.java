@@ -25,10 +25,31 @@ public class RepresentanteService {
     private RepresentanteEntity toEntity(RepresentanteRequestDTO dto) {
         RepresentanteEntity entity = new RepresentanteEntity();
         entity.setNome(dto.getNome());
+        entity.setCpfCnpj(dto.getCpfCnpj());
+        entity.setRgIe(dto.getRgIe());
+        entity.setNascimento(dto.getNascimento());
+        entity.setNomeFantasia(dto.getNomeFantasia());
+        entity.setSituacaoLegal(dto.getSituacaoLegal());
+        entity.setStatus(dto.getStatus());
         entity.setEmail(dto.getEmail());
-        entity.setTelefone(dto.getTelefone());
-        entity.setPercentualComissao(dto.getPercentualComissao());
-        entity.setTipo(dto.getTipo());
+        entity.setCelularWhatsapp(dto.getCelularWhatsapp());
+        entity.setCep(dto.getCep());
+        entity.setEndereco(dto.getEndereco());
+        entity.setNumero(dto.getNumero());
+        entity.setComplemento(dto.getComplemento());
+        entity.setBairro(dto.getBairro());
+        entity.setCidade(dto.getCidade());
+        entity.setEstado(dto.getEstado());
+        entity.setRegiaoAtuacao(dto.getRegiaoAtuacao());
+        entity.setRegraComissao(dto.getRegraComissao());
+        entity.setObservacoes(dto.getObservacoes());
+        entity.setBanco(dto.getBanco());
+        entity.setAgencia(dto.getAgencia());
+        entity.setConta(dto.getConta());
+        entity.setTipoConta(dto.getTipoConta());
+        entity.setConcederAcessoApp(dto.getConcederAcessoApp());
+        entity.setLoginAplicativo(dto.getLoginAplicativo());
+        entity.setSenhaAcesso(dto.getSenhaAcesso());
         return entity;
     }
 
@@ -37,17 +58,35 @@ public class RepresentanteService {
         RepresentanteResponseDTO dto = new RepresentanteResponseDTO();
         dto.setId(entity.getId());
         dto.setNome(entity.getNome());
+        dto.setCpfCnpj(entity.getCpfCnpj());
+        dto.setRgIe(entity.getRgIe());
+        dto.setNascimento(entity.getNascimento());
+        dto.setNomeFantasia(entity.getNomeFantasia());
+        dto.setSituacaoLegal(entity.getSituacaoLegal());
+        dto.setStatus(entity.getStatus());
         dto.setEmail(entity.getEmail());
-        dto.setTelefone(entity.getTelefone());
-        dto.setPercentualComissao(entity.getPercentualComissao());
-        dto.setTipo(entity.getTipo());
+        dto.setCelularWhatsapp(entity.getCelularWhatsapp());
+        dto.setCep(entity.getCep());
+        dto.setEndereco(entity.getEndereco());
+        dto.setNumero(entity.getNumero());
+        dto.setComplemento(entity.getComplemento());
+        dto.setBairro(entity.getBairro());
+        dto.setCidade(entity.getCidade());
+        dto.setEstado(entity.getEstado());
+        dto.setRegiaoAtuacao(entity.getRegiaoAtuacao());
+        dto.setRegraComissao(entity.getRegraComissao());
+        dto.setObservacoes(entity.getObservacoes());
+        dto.setBanco(entity.getBanco());
+        dto.setAgencia(entity.getAgencia());
+        dto.setConta(entity.getConta());
+        dto.setTipoConta(entity.getTipoConta());
+        dto.setConcederAcessoApp(entity.getConcederAcessoApp());
+        dto.setLoginAplicativo(entity.getLoginAplicativo());
         return dto;
     }
 
     public RepresentanteResponseDTO createRepresentante(RepresentanteRequestDTO requestDTO) {
         RepresentanteEntity entity = toEntity(requestDTO);
-        // Senha armazenada em texto plano (apenas para desenvolvimento/trabalho acadêmico)
-        entity.setSenha(requestDTO.getSenha());
         RepresentanteEntity savedEntity = representanteRepository.save(entity);
         return toResponseDTO(savedEntity);
     }
