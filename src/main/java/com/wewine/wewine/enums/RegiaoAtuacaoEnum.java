@@ -1,19 +1,22 @@
 package com.wewine.wewine.enums;
-}
-    }
-        return descricao;
-    public String getDescricao() {
 
-    }
-        this.descricao = descricao;
-    RegiaoAtuacaoEnum(String descricao) {
-
-    private final String descricao;
-
-    REGIAO_3("Região 3");
-    REGIAO_2("Região 2"),
-    REGIAO_1("Região 1"),
-    // Adicionar as cidades necessárias manualmente
 public enum RegiaoAtuacaoEnum {
-
-
+    ARARANGUA,
+    BALNEARIO_CAMBORIU,
+    BLUMENAU,
+    CHAPECO,
+    CRICIUMA,
+    FLORIANOPOLIS,
+    ITAJAI,
+    JARAGUA_DO_SUL,
+    JOINVILLE,
+    LAGES,
+    TUBARAO,
+    ORLEANS,
+    MARACAJA,
+    LAURO_MULLER,
+    ICARA,
+    COCAL_DO_SUL,
+    NOVA_VENEZA,
+    SIDEROPOLIS
+}

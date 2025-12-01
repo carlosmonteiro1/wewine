@@ -2,6 +2,7 @@ package com.wewine.wewine.Controller;
 
 import com.wewine.wewine.DTO.ClienteRequestDTO;
 import com.wewine.wewine.DTO.ClienteResponseDTO;
+import com.wewine.wewine.DTO.LocalizacaoDTO;
 import com.wewine.wewine.Service.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -106,5 +107,24 @@ public class ClienteController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping("/{id}/localizacao")
+    @Operation(summary = "Atualizar localização do cliente",
+               description = "Atualiza apenas as coordenadas GPS (latitude e longitude) de um cliente. Útil para apps mobile.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Localização atualizada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Coordenadas inválidas"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
+    })
+    public ResponseEntity<ClienteResponseDTO> atualizarLocalizacao(
+            @PathVariable Long id,
+            @Valid @RequestBody LocalizacaoDTO localizacao) {
+        try {
+            ClienteResponseDTO updated = clienteService.atualizarLocalizacao(id, localizacao);
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

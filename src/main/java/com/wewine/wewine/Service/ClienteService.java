@@ -3,6 +3,7 @@ package com.wewine.wewine.Service;
 
 import com.wewine.wewine.DTO.ClienteRequestDTO;
 import com.wewine.wewine.DTO.ClienteResponseDTO;
+import com.wewine.wewine.DTO.LocalizacaoDTO;
 import com.wewine.wewine.DTO.RepresentanteResponseDTO;
 import com.wewine.wewine.Entity.ClienteEntity;
 import com.wewine.wewine.Entity.RepresentanteEntity;
@@ -20,11 +21,15 @@ public class ClienteService {
 
     private final ClienteRepository clienteRepository;
     private final RepresentanteRepository representanteRepository;
+    private final GeolocalizacaoService geolocalizacaoService;
 
     @Autowired
-    public ClienteService(ClienteRepository clienteRepository, RepresentanteRepository representanteRepository) {
+    public ClienteService(ClienteRepository clienteRepository,
+                         RepresentanteRepository representanteRepository,
+                         GeolocalizacaoService geolocalizacaoService) {
         this.clienteRepository = clienteRepository;
         this.representanteRepository = representanteRepository;
+        this.geolocalizacaoService = geolocalizacaoService;
     }
 
     /* Mapeamento DTO -> Entity */
@@ -124,5 +129,25 @@ public class ClienteService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Atualiza apenas a localização (latitude e longitude) de um cliente
+     * Método útil para apps mobile que enviam coordenadas GPS
+     */
+    public ClienteResponseDTO atualizarLocalizacao(Long id, LocalizacaoDTO localizacao) {
+        ClienteEntity entity = clienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente com ID " + id + " não encontrado."));
+
+        // Valida coordenadas
+        if (!geolocalizacaoService.coordenadasValidas(localizacao.getLatitude(), localizacao.getLongitude())) {
+            throw new IllegalArgumentException("Coordenadas inválidas");
+        }
+
+        entity.setLatitude(localizacao.getLatitude());
+        entity.setLongitude(localizacao.getLongitude());
+
+        ClienteEntity updated = clienteRepository.save(entity);
+        return toResponseDTO(updated);
     }
 }

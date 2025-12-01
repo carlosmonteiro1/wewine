@@ -62,4 +62,33 @@ public class RepresentanteController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    // -----------------------------------------------------------
+    // 4. ENDPOINT: ATUALIZAÇÃO DE REPRESENTANTE (PUT /api/representantes/{id})
+    // -----------------------------------------------------------
+    @PutMapping("/{id}")
+    public ResponseEntity<RepresentanteResponseDTO> update(
+            @PathVariable Long id,
+            @Valid @RequestBody RepresentanteRequestDTO request) {
+        try {
+            RepresentanteResponseDTO updated = representanteService.updateRepresentante(id, request);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // -----------------------------------------------------------
+    // 5. ENDPOINT: EXCLUSÃO LÓGICA DE REPRESENTANTE (DELETE /api/representantes/{id})
+    // Funcionalidade: Altera o status do representante para INATIVO
+    // -----------------------------------------------------------
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        try {
+            representanteService.deleteRepresentante(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

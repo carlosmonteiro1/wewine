@@ -17,26 +17,19 @@ public class PedidoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long codigoPedido;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id")
     private ClienteEntity cliente;
-
     private LocalDate data;
-
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemPedidoEntity> itens = new ArrayList<>();
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "representante_id")
     private RepresentanteEntity representante;
-
     @Enumerated(EnumType.STRING)
     private FormaPagamentoEnum pagamento;
-
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal total;
-
     @Enumerated(EnumType.STRING)
     private StatusPedido status;
 }

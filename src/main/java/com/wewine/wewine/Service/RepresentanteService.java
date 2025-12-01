@@ -104,4 +104,49 @@ public class RepresentanteService {
         return representanteRepository.findById(id)
                 .map(this::toResponseDTO);
     }
+
+    // Atualiza um representante existente
+    public RepresentanteResponseDTO updateRepresentante(Long id, RepresentanteRequestDTO requestDTO) {
+        RepresentanteEntity entity = representanteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Representante não encontrado com ID: " + id));
+
+        entity.setNome(requestDTO.getNome());
+        entity.setCpfCnpj(requestDTO.getCpfCnpj());
+        entity.setRgIe(requestDTO.getRgIe());
+        entity.setNascimento(requestDTO.getNascimento());
+        entity.setNomeFantasia(requestDTO.getNomeFantasia());
+        entity.setSituacaoLegal(requestDTO.getSituacaoLegal());
+        entity.setStatus(requestDTO.getStatus());
+        entity.setEmail(requestDTO.getEmail());
+        entity.setCelularWhatsapp(requestDTO.getCelularWhatsapp());
+        entity.setCep(requestDTO.getCep());
+        entity.setEndereco(requestDTO.getEndereco());
+        entity.setNumero(requestDTO.getNumero());
+        entity.setComplemento(requestDTO.getComplemento());
+        entity.setBairro(requestDTO.getBairro());
+        entity.setCidade(requestDTO.getCidade());
+        entity.setEstado(requestDTO.getEstado());
+        entity.setRegiaoAtuacao(requestDTO.getRegiaoAtuacao());
+        entity.setRegraComissao(requestDTO.getRegraComissao());
+        entity.setObservacoes(requestDTO.getObservacoes());
+        entity.setBanco(requestDTO.getBanco());
+        entity.setAgencia(requestDTO.getAgencia());
+        entity.setConta(requestDTO.getConta());
+        entity.setTipoConta(requestDTO.getTipoConta());
+        entity.setConcederAcessoApp(requestDTO.getConcederAcessoApp());
+        entity.setLoginAplicativo(requestDTO.getLoginAplicativo());
+        entity.setSenhaAcesso(requestDTO.getSenhaAcesso());
+
+        RepresentanteEntity updatedEntity = representanteRepository.save(entity);
+        return toResponseDTO(updatedEntity);
+    }
+
+    // Soft delete - altera o status para INATIVO
+    public void deleteRepresentante(Long id) {
+        RepresentanteEntity entity = representanteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Representante não encontrado com ID: " + id));
+
+        entity.setStatus(com.wewine.wewine.enums.StatusRepresentanteEnum.INATIVO);
+        representanteRepository.save(entity);
+    }
 }
