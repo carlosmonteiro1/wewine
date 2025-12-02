@@ -15,4 +15,5 @@ public class VinhoResponseDTO {
     private String urlImagem;
     private BigDecimal preco;
     private String notasDegustacao;
+    private Integer estoque;
 }

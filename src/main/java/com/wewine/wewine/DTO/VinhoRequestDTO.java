@@ -26,4 +26,8 @@ public class VinhoRequestDTO {
 
     private TipoVinhoEnum tipo;
     private String notasDegustacao;
+
+    @NotNull(message = "Estoque é obrigatório")
+    @Positive(message = "Estoque deve ser maior que zero")
+    private Integer estoque;
 }

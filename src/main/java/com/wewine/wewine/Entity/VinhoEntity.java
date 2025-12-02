@@ -21,4 +21,5 @@ public class VinhoEntity {
     @Enumerated(EnumType.STRING)
     private TipoVinhoEnum tipo;
     private String notasDegustacao;
+    private int estoque;
 }

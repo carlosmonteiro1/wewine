@@ -84,6 +84,7 @@ public class VinhoService {
                     existingVinho.setPreco(requestDTO.getPreco());
                     existingVinho.setTipo(requestDTO.getTipo());
                     existingVinho.setNotasDegustacao(requestDTO.getNotasDegustacao());
+                    existingVinho.setEstoque(requestDTO.getEstoque() != null ? requestDTO.getEstoque() : 0);
 
                     VinhoEntity updatedVinho = vinhoRepository.save(existingVinho);
                     return toResponseDTO(updatedVinho);
