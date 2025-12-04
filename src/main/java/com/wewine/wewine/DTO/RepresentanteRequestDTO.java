@@ -71,4 +71,12 @@ public class RepresentanteRequestDTO {
     @NotBlank
     @Size(min = 6)
     private String senhaAcesso;
+
+    private Double vendas;
+
+    private Double comissao;
+
+    private Integer clientesAtivos;
+
+    private String[] cidades;
 }

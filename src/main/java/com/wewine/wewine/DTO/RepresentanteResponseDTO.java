@@ -33,4 +33,8 @@ public class RepresentanteResponseDTO {
     private TipoContaEnum tipoConta;
     private AcessoAppEnum concederAcessoApp;
     private String loginAplicativo;
+    private Double vendas;
+    private Double comissao;
+    private Integer clientesAtivos;
+    private String[] cidades;
 }
