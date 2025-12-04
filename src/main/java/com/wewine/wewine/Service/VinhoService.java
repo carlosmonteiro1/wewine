@@ -21,6 +21,7 @@ public class VinhoService {
         this.vinhoRepository = vinhoRepository;
     }
 
+    // ---------- CONVERSÃO DTO -> ENTITY ----------
     private VinhoEntity toEntity(VinhoRequestDTO dto) {
         VinhoEntity entity = new VinhoEntity();
         if (dto == null) {
@@ -35,9 +36,13 @@ public class VinhoService {
         entity.setTipo(dto.getTipo());
         entity.setNotasDegustacao(dto.getNotasDegustacao());
 
+        // 👇 ESSENCIAL: adicionar estoque
+        entity.setEstoque(dto.getEstoque() != null ? dto.getEstoque() : 0);
+
         return entity;
     }
 
+    // ---------- CONVERSÃO ENTITY -> RESPONSE DTO ----------
     private VinhoResponseDTO toResponseDTO(VinhoEntity entity) {
         VinhoResponseDTO dto = new VinhoResponseDTO();
         if (entity == null) {
@@ -53,15 +58,20 @@ public class VinhoService {
         dto.setTipo(entity.getTipo());
         dto.setNotasDegustacao(entity.getNotasDegustacao());
 
+        // 👇 ESSENCIAL: devolver estoque ao front
+        dto.setEstoque(entity.getEstoque());
+
         return dto;
     }
 
+    // ---------- CREATE ----------
     public VinhoResponseDTO createVinho(VinhoRequestDTO requestDTO) {
         VinhoEntity vinhoToSave = toEntity(requestDTO);
         VinhoEntity savedVinho = vinhoRepository.save(vinhoToSave);
         return toResponseDTO(savedVinho);
     }
 
+    // ---------- LISTAR ----------
     public List<VinhoResponseDTO> findAll() {
         List<VinhoEntity> entities = vinhoRepository.findAll();
         return entities.stream()
@@ -69,14 +79,17 @@ public class VinhoService {
                 .collect(Collectors.toList());
     }
 
+    // ---------- BUSCAR POR ID ----------
     public Optional<VinhoResponseDTO> findById(Long id) {
         return vinhoRepository.findById(id)
                 .map(this::toResponseDTO);
     }
 
+    // ---------- UPDATE ----------
     public Optional<VinhoResponseDTO> updateVinho(Long id, VinhoRequestDTO requestDTO) {
         return vinhoRepository.findById(id)
                 .map(existingVinho -> {
+
                     existingVinho.setNome(requestDTO.getNome());
                     existingVinho.setAnoSafra(requestDTO.getAnoSafra());
                     existingVinho.setRegiao(requestDTO.getRegiao());
@@ -84,13 +97,18 @@ public class VinhoService {
                     existingVinho.setPreco(requestDTO.getPreco());
                     existingVinho.setTipo(requestDTO.getTipo());
                     existingVinho.setNotasDegustacao(requestDTO.getNotasDegustacao());
-                    existingVinho.setEstoque(requestDTO.getEstoque() != null ? requestDTO.getEstoque() : 0);
+
+                    // 👇 ESSENCIAL: atualizar estoque
+                    existingVinho.setEstoque(
+                            requestDTO.getEstoque() != null ? requestDTO.getEstoque() : existingVinho.getEstoque()
+                    );
 
                     VinhoEntity updatedVinho = vinhoRepository.save(existingVinho);
                     return toResponseDTO(updatedVinho);
                 });
     }
 
+    // ---------- DELETE ----------
     public boolean deleteVinho(Long id) {
         if (vinhoRepository.existsById(id)) {
             vinhoRepository.deleteById(id);
