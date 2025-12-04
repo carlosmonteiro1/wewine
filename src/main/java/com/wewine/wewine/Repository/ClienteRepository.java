@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface ClienteRepository extends JpaRepository<ClienteEntity, Long> {
     List<ClienteEntity> findByRepresentanteId(Long representanteId);
+
+    Long countByRepresentanteId(Long representanteId);
 }

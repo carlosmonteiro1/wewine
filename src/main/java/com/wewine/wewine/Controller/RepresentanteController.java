@@ -91,4 +91,20 @@ public class RepresentanteController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // -----------------------------------------------------------
+    // 6. ENDPOINT: ATUALIZAR CONTADOR DE CLIENTES ATIVOS (POST /api/representantes/{id}/atualizar-clientes-ativos)
+    // Funcionalidade: Atualiza o campo clientesAtivos com a contagem real de clientes vinculados
+    // -----------------------------------------------------------
+    @PostMapping("/{id}/atualizar-clientes-ativos")
+    public ResponseEntity<RepresentanteResponseDTO> atualizarClientesAtivos(@PathVariable Long id) {
+        try {
+            representanteService.atualizarClientesAtivos(id);
+            return representanteService.findById(id)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

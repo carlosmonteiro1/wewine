@@ -4,6 +4,7 @@ import com.wewine.wewine.DTO.RepresentanteRequestDTO;
 import com.wewine.wewine.DTO.RepresentanteResponseDTO;
 import com.wewine.wewine.Entity.RepresentanteEntity;
 import com.wewine.wewine.Repository.RepresentanteRepository;
+import com.wewine.wewine.Repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +16,13 @@ import java.util.stream.Collectors;
 public class RepresentanteService {
 
     private final RepresentanteRepository representanteRepository;
+    private final ClienteRepository clienteRepository;
 
     @Autowired
-    public RepresentanteService(RepresentanteRepository representanteRepository) {
+    public RepresentanteService(RepresentanteRepository representanteRepository,
+                               ClienteRepository clienteRepository) {
         this.representanteRepository = representanteRepository;
+        this.clienteRepository = clienteRepository;
     }
 
     // Mapeamento DTO -> Entity
@@ -166,5 +170,18 @@ public class RepresentanteService {
 
         entity.setStatus(com.wewine.wewine.enums.StatusRepresentanteEnum.INATIVO);
         representanteRepository.save(entity);
+    }
+
+    /**
+     * Atualiza o contador de clientes ativos de um representante
+     * Este método conta quantos clientes estão vinculados ao representante
+     */
+    public void atualizarClientesAtivos(Long representanteId) {
+        RepresentanteEntity representante = representanteRepository.findById(representanteId)
+                .orElseThrow(() -> new RuntimeException("Representante não encontrado com ID: " + representanteId));
+
+        Long totalClientes = clienteRepository.countByRepresentanteId(representanteId);
+        representante.setClientesAtivos(totalClientes.intValue());
+        representanteRepository.save(representante);
     }
 }
