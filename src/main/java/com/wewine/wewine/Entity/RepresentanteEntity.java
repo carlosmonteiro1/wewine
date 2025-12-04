@@ -48,4 +48,9 @@ public class RepresentanteEntity {
     private String loginAplicativo;
     @Column(nullable = false)
     private String senhaAcesso;
+    private Double vendas;
+    private Double comissao;
+    private Integer clientesAtivos;
+    @Column(columnDefinition = "TEXT")
+    private String cidades;
 }

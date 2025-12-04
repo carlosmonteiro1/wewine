@@ -50,6 +50,12 @@ public class RepresentanteService {
         entity.setConcederAcessoApp(dto.getConcederAcessoApp());
         entity.setLoginAplicativo(dto.getLoginAplicativo());
         entity.setSenhaAcesso(dto.getSenhaAcesso());
+        entity.setVendas(dto.getVendas());
+        entity.setComissao(dto.getComissao());
+        entity.setClientesAtivos(dto.getClientesAtivos());
+        if (dto.getCidades() != null && dto.getCidades().length > 0) {
+            entity.setCidades(String.join(",", dto.getCidades()));
+        }
         return entity;
     }
 
@@ -82,6 +88,12 @@ public class RepresentanteService {
         dto.setTipoConta(entity.getTipoConta());
         dto.setConcederAcessoApp(entity.getConcederAcessoApp());
         dto.setLoginAplicativo(entity.getLoginAplicativo());
+        dto.setVendas(entity.getVendas());
+        dto.setComissao(entity.getComissao());
+        dto.setClientesAtivos(entity.getClientesAtivos());
+        if (entity.getCidades() != null && !entity.getCidades().isEmpty()) {
+            dto.setCidades(entity.getCidades().split(","));
+        }
         return dto;
     }
 
@@ -136,6 +148,12 @@ public class RepresentanteService {
         entity.setConcederAcessoApp(requestDTO.getConcederAcessoApp());
         entity.setLoginAplicativo(requestDTO.getLoginAplicativo());
         entity.setSenhaAcesso(requestDTO.getSenhaAcesso());
+        entity.setVendas(requestDTO.getVendas());
+        entity.setComissao(requestDTO.getComissao());
+        entity.setClientesAtivos(requestDTO.getClientesAtivos());
+        if (requestDTO.getCidades() != null && requestDTO.getCidades().length > 0) {
+            entity.setCidades(String.join(",", requestDTO.getCidades()));
+        }
 
         RepresentanteEntity updatedEntity = representanteRepository.save(entity);
         return toResponseDTO(updatedEntity);
