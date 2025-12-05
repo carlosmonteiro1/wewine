@@ -2,12 +2,16 @@ package com.wewine.wewine.Service;
 
 import com.wewine.wewine.DTO.RepresentanteRequestDTO;
 import com.wewine.wewine.DTO.RepresentanteResponseDTO;
+import com.wewine.wewine.Entity.PedidoEntity;
 import com.wewine.wewine.Entity.RepresentanteEntity;
-import com.wewine.wewine.Repository.RepresentanteRepository;
 import com.wewine.wewine.Repository.ClienteRepository;
+import com.wewine.wewine.Repository.PedidoRepository;
+import com.wewine.wewine.Repository.RepresentanteRepository;
+import com.wewine.wewine.enums.StatusPedido;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,12 +21,15 @@ public class RepresentanteService {
 
     private final RepresentanteRepository representanteRepository;
     private final ClienteRepository clienteRepository;
+    private final PedidoRepository pedidoRepository;
 
     @Autowired
     public RepresentanteService(RepresentanteRepository representanteRepository,
-                               ClienteRepository clienteRepository) {
+                               ClienteRepository clienteRepository,
+                               PedidoRepository pedidoRepository) {
         this.representanteRepository = representanteRepository;
         this.clienteRepository = clienteRepository;
+        this.pedidoRepository = pedidoRepository;
     }
 
     // Mapeamento DTO -> Entity
@@ -92,13 +99,52 @@ public class RepresentanteService {
         dto.setTipoConta(entity.getTipoConta());
         dto.setConcederAcessoApp(entity.getConcederAcessoApp());
         dto.setLoginAplicativo(entity.getLoginAplicativo());
-        dto.setVendas(entity.getVendas());
-        dto.setComissao(entity.getComissao());
-        dto.setClientesAtivos(entity.getClientesAtivos());
+
+        // Calcular vendas e comissões automaticamente
+        calcularVendasEComissoes(entity, dto);
+
+        // Calcular clientes ativos
+        Long totalClientes = clienteRepository.countByRepresentanteId(entity.getId());
+        dto.setClientesAtivos(totalClientes.intValue());
+
         if (entity.getCidades() != null && !entity.getCidades().isEmpty()) {
             dto.setCidades(entity.getCidades().split(","));
         }
         return dto;
+    }
+
+    /**
+     * Calcula vendas e comissões baseado nos pedidos do representante
+     */
+    private void calcularVendasEComissoes(RepresentanteEntity entity, RepresentanteResponseDTO dto) {
+        // Buscar apenas pedidos finalizados/entregues
+        List<StatusPedido> statusValidos = List.of(StatusPedido.ENTREGUE, StatusPedido.FATURADO);
+        List<PedidoEntity> pedidos = pedidoRepository.findByRepresentanteId(entity.getId()).stream()
+                .filter(p -> statusValidos.contains(p.getStatus()))
+                .toList();
+
+        // Calcular total de vendas
+        BigDecimal totalVendas = pedidos.stream()
+                .map(PedidoEntity::getTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        dto.setVendas(totalVendas.doubleValue());
+
+        // Calcular comissão baseado na regra de comissão
+        if (entity.getRegraComissao() != null) {
+            double percentualComissao = obterPercentualComissao(entity.getRegraComissao());
+            double valorComissao = totalVendas.doubleValue() * (percentualComissao / 100.0);
+            dto.setComissao(valorComissao);
+        } else {
+            dto.setComissao(0.0);
+        }
+    }
+
+    /**
+     * Obtém o percentual de comissão do enum
+     */
+    private double obterPercentualComissao(com.wewine.wewine.enums.PorcentagemEnum regraComissao) {
+        return regraComissao.getValor();
     }
 
     public RepresentanteResponseDTO createRepresentante(RepresentanteRequestDTO requestDTO) {
