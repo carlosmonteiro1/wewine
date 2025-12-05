@@ -1,5 +1,6 @@
 package com.wewine.wewine.Controller;
 
+import com.wewine.wewine.DTO.AtualizarStatusDTO;
 import com.wewine.wewine.DTO.PedidoRequestDTO;
 import com.wewine.wewine.DTO.PedidoResponseDTO;
 import com.wewine.wewine.Service.PedidoService;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/api/pedidos")
 @Tag(name = "Pedidos", description = "Endpoints para gerenciamento de pedidos")
 public class PedidoController {
+
     private final PedidoService pedidoService;
 
     public PedidoController(PedidoService pedidoService) {
@@ -23,19 +25,16 @@ public class PedidoController {
     }
 
     // SIMULAÇÃO DE SEGURANÇA:
-    // Em um sistema real, o ID do Representante viria do token JWT/sessão.
     private Long getRepresentanteIdSimulado() {
         return 1L;
     }
 
     // -----------------------------------------------------------
-    // 1. ENDPOINT: CRIAÇÃO DE PEDIDO (POST)
-    // Funcionalidade: Emissão de pedidos com seleção de produtos
+    // 1. CRIAÇÃO DO PEDIDO
     // -----------------------------------------------------------
     @PostMapping
     public ResponseEntity<PedidoResponseDTO> createPedido(@Valid @RequestBody PedidoRequestDTO request) {
 
-        // Chamada ao Service, que fará todas as validações, cálculos e persistência transacional.
         PedidoResponseDTO saved = pedidoService.createPedido(request);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -43,51 +42,53 @@ public class PedidoController {
                 .buildAndExpand(saved.getCodigoPedido())
                 .toUri();
 
-        // Retorna 201 Created
         return ResponseEntity.created(location).body(saved);
     }
 
     // -----------------------------------------------------------
-    // 2. ENDPOINT: LISTAGEM DE PEDIDOS POR REPRESENTANTE (GET)
-    // Funcionalidade: Acompanhamento de pedidos (App Mobile)
+    // 2. LISTAR MEUS PEDIDOS
     // -----------------------------------------------------------
     @GetMapping("/meusPedidos")
     public ResponseEntity<List<PedidoResponseDTO>> findByRepresentante() {
-        // Pega o ID do representante logado (simulação)
         Long representanteId = getRepresentanteIdSimulado();
 
         List<PedidoResponseDTO> lista = pedidoService.findByRepresentanteId(representanteId);
 
-        if (lista.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
+        if (lista.isEmpty()) return ResponseEntity.noContent().build();
 
-        // Retorna 200 OK
         return ResponseEntity.ok(lista);
     }
 
     // -----------------------------------------------------------
-    // 3. ENDPOINT: LISTAGEM GERAL DE PEDIDOS (GET)
-    // Funcionalidade: Acompanhamento de pedidos (Painel Admin)
+    // 3. LISTAGEM GERAL
     // -----------------------------------------------------------
-    // OBS: Este endpoint deve ser restrito ao perfil de Administrador (TipoUsuario.ADMIN).
     @GetMapping
     public ResponseEntity<List<PedidoResponseDTO>> findAll() {
         List<PedidoResponseDTO> lista = pedidoService.findAll();
 
-        if (lista.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
+        if (lista.isEmpty()) return ResponseEntity.noContent().build();
+
         return ResponseEntity.ok(lista);
     }
 
     // -----------------------------------------------------------
-    // 4. ENDPOINT: CONSULTA POR ID (GET)
+    // 4. BUSCAR POR ID
     // -----------------------------------------------------------
     @GetMapping("/{id}")
     public ResponseEntity<PedidoResponseDTO> findById(@PathVariable Long id) {
-        // Se o Service lança 404, o Controller só se preocupa com o 200 OK.
         PedidoResponseDTO dto = pedidoService.findById(id);
         return ResponseEntity.ok(dto);
+    }
+
+    // -----------------------------------------------------------
+    // 5. ATUALIZAR STATUS DO PEDIDO
+    // -----------------------------------------------------------
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Void> atualizarStatus(
+            @PathVariable Long id,
+            @RequestBody AtualizarStatusDTO dto
+    ) {
+        pedidoService.atualizarStatus(id, dto.getStatus());
+        return ResponseEntity.noContent().build();
     }
 }

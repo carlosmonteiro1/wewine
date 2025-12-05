@@ -62,6 +62,17 @@ public class PedidoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void atualizarStatus(Long id, StatusPedido novoStatus) {
+
+        PedidoEntity pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado: " + id));
+
+        pedido.setStatus(novoStatus);
+
+        pedidoRepository.save(pedido);
+    }
+
     @Transactional // Garante que se um item falhar, o pedido inteiro será desfeito (rollback).
     public PedidoResponseDTO createPedido(PedidoRequestDTO requestDTO) {
 
